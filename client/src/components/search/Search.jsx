@@ -12,7 +12,7 @@ export default function Search() {
                 <span>Users</span>
             </h2>
             <div className="search-input-container">
-                <input type="text" placeholder="Please, select the search criteria" name="search" />
+                <input type="text" placeholder="Please, select the search criteria" name="search" defaultChecked/>
 
                 <button className="btn close-btn">
                     <i className="fa-solid fa-xmark"></i>
