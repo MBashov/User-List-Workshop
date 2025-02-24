@@ -5,8 +5,7 @@ export default function UserListItem({ user }) {
     return (
         <tr>
             <td>
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-                    alt="Peter's profile" className="image" />
+                <img src={user.imageUrl} alt={`${user.firstName}'s profile`} className="image" />
             </td>
             <td>{user.firstName}</td>
             <td>{user.lastName}</td>
