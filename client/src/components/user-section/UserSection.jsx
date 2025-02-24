@@ -10,7 +10,6 @@ const baseUrl = 'http://localhost:3030/jsonstore';
 export default function UserSection() {
 
     const [users, setUsers] = useState([]);
-    console.log(users);
     
     useEffect(() => {
         fetch(`${baseUrl}/users`)
@@ -24,7 +23,7 @@ export default function UserSection() {
 
             < Search />
 
-            < UserList />
+            < UserList users={users}/>
 
             <button className="btn-add btn">Add new user</button>
 
