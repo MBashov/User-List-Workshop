@@ -1,8 +1,9 @@
+import { useEffect, useState } from "react";
 import Search from "../search/Search";
 import Pagination from "../pagination/Pagination";
 import UserList from "./user-list/UserList";
-import { use, useEffect, useState } from "react";
 import AddUser from "./add-user/AddUser";
+import ShowUserInfo from "./show-user-info/ShowUserInfo";
 
 const baseUrl = 'http://localhost:3030/jsonstore';
 
@@ -10,6 +11,7 @@ export default function UserSection() {
 
     const [users, setUsers] = useState([]);
     const [showAddUserForm, setShowUserForm] = useState(false);
+    const [showUserInfo, setShowUserInfo] = useState(false);
 
     useEffect(() => {
         fetch(`${baseUrl}/users`)
@@ -25,6 +27,14 @@ export default function UserSection() {
 
     function hideAddUserFormHandler() {
         setShowUserForm(false);
+    }
+
+    function showUserInfoClickHandler() {
+        setShowUserInfo(true);
+    }
+
+    function hideShowUserInfo() {
+        setShowUserInfo(false);
     }
 
     function addUserSaveHandler(e) {
@@ -44,7 +54,7 @@ export default function UserSection() {
             body: JSON.stringify(userData),
         })
             // update local state   
-            .then(response => response.json())  
+            .then(response => response.json())
             .then(user => setUsers(oldUsers => [...oldUsers, user]))
             .catch(err => console.log(err.message));
 
@@ -58,7 +68,7 @@ export default function UserSection() {
 
             < Search />
 
-            < UserList users={users} />
+            < UserList users={users} showUserInfo={showUserInfoClickHandler} />
 
             {showAddUserForm && (
                 <AddUser
@@ -66,6 +76,8 @@ export default function UserSection() {
                     onSave={addUserSaveHandler}
                 />
             )}
+
+            {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} />}
 
             <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 

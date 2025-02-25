@@ -1,6 +1,6 @@
 import UserListItem from "./user-list-item/UserListItem";
 
-export default function UserList({ users }) {
+export default function UserList({ users, showUserInfo }) {
 
     return (
         <div className="table-wrapper">
@@ -129,6 +129,7 @@ export default function UserList({ users }) {
                         < UserListItem
                             key={user._id}
                             user={user}
+                            showUserInfo={showUserInfo}
                         />
                     )}
 
