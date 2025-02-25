@@ -1,7 +1,6 @@
 import UserListItem from "./user-list-item/UserListItem";
 
 export default function UserList({ users, showUserInfo }) {
-
     return (
         <div className="table-wrapper">
 

@@ -11,7 +11,7 @@ export default function UserSection() {
 
     const [users, setUsers] = useState([]);
     const [showAddUserForm, setShowUserForm] = useState(false);
-    const [showUserInfo, setShowUserInfo] = useState(false);
+    const [showUserInfo, setShowUserInfo] = useState(null);
 
     useEffect(() => {
         fetch(`${baseUrl}/users`)
@@ -29,12 +29,12 @@ export default function UserSection() {
         setShowUserForm(false);
     }
 
-    function showUserInfoClickHandler() {
-        setShowUserInfo(true);
+    function showUserInfoClickHandler(user) {
+        setShowUserInfo(user);
     }
 
     function hideShowUserInfo() {
-        setShowUserInfo(false);
+        setShowUserInfo(null);
     }
 
     function addUserSaveHandler(e) {
@@ -43,8 +43,18 @@ export default function UserSection() {
 
         // get user data
         const formData = new FormData(e.currentTarget);
-        const userData = Object.fromEntries(formData.entries());
-
+        const userData = {
+            ...Object.fromEntries(formData.entries()),
+            address: {
+                country: formData.get('country'),
+                city: formData.get('city'),
+                street: formData.get('street'),
+                streetNumber: formData.get('streetNumber')
+            },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        }
+        
         // make post request
         fetch(`${baseUrl}/users`, {
             method: 'POST',
@@ -77,7 +87,7 @@ export default function UserSection() {
                 />
             )}
 
-            {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} />}
+            {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} user={showUserInfo} />}
 
             <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 
