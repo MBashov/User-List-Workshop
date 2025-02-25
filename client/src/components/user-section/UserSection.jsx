@@ -13,7 +13,7 @@ export default function UserSection() {
 
     useEffect(() => {
         fetch(`${baseUrl}/users`)
-            .then(res => res.json())
+            .then(response => response.json())
             .then(users => setUsers(Object.values(users)))
             .catch(err => console.log(err.message));
     }, []);
@@ -23,7 +23,33 @@ export default function UserSection() {
         setShowUserForm(true);
     }
 
-    function hideAddUserForm() {
+    function hideAddUserFormHandler() {
+        setShowUserForm(false);
+    }
+
+    function addUserSaveHandler(e) {
+        // prevent default
+        e.preventDefault();
+
+        // get user data
+        const formData = new FormData(e.currentTarget);
+        const userData = Object.fromEntries(formData.entries());
+
+        // make post request
+        fetch(`${baseUrl}/users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'Application/json',
+            },
+            body: JSON.stringify(userData),
+        })
+            // update local state   
+            .then(response => response.json())  
+            .then(user => setUsers(oldUsers => [...oldUsers, user]))
+            .catch(err => console.log(err.message));
+
+
+        // close modal
         setShowUserForm(false);
     }
 
@@ -34,7 +60,12 @@ export default function UserSection() {
 
             < UserList users={users} />
 
-            {showAddUserForm && < AddUser onClose={hideAddUserForm} />}
+            {showAddUserForm && (
+                <AddUser
+                    onClose={hideAddUserFormHandler}
+                    onSave={addUserSaveHandler}
+                />
+            )}
 
             <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 

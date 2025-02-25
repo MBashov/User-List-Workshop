@@ -1,4 +1,5 @@
-export default function AddUser({ onClose }) {
+export default function AddUser({ onClose, onSave }) {
+
     return (
         <div className="overlay">
             <div className="backdrop" onClick={onClose}></div>
@@ -15,7 +16,7 @@ export default function AddUser({ onClose }) {
                             </svg>
                         </button>
                     </header>
-                    <form>
+                    <form onSubmit={onSave}>
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="firstName">First name</label>
