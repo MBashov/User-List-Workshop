@@ -4,6 +4,7 @@ import Pagination from "../pagination/Pagination";
 import UserList from "./user-list/UserList";
 import AddUser from "./add-user/AddUser";
 import ShowUserInfo from "./show-user-info/ShowUserInfo";
+import DeleteUser from "./delete-user/DeleteUser";
 
 const baseUrl = 'http://localhost:3030/jsonstore';
 
@@ -12,6 +13,7 @@ export default function UserSection() {
     const [users, setUsers] = useState([]);
     const [showAddUserForm, setShowUserForm] = useState(false);
     const [showUserInfo, setShowUserInfo] = useState(null);
+    const [deleteUser, setDeleteUser] = useState(false);
 
     useEffect(() => {
         fetch(`${baseUrl}/users`)
@@ -54,7 +56,7 @@ export default function UserSection() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         }
-        
+
         // make post request
         fetch(`${baseUrl}/users`, {
             method: 'POST',
@@ -73,12 +75,20 @@ export default function UserSection() {
         setShowUserForm(false);
     }
 
+    function onDeleteUserClickHandler() {
+        setDeleteUser(true);
+    }
+
+    function onCancelDeleteUserClickHandler() {
+        setDeleteUser(false);
+    }
+
     return (
         <section className="card users-container">
 
             < Search />
 
-            < UserList users={users} showUserInfo={showUserInfoClickHandler} />
+            < UserList users={users} showUserInfo={showUserInfoClickHandler} onDeleteClick={onDeleteUserClickHandler} />
 
             {showAddUserForm && (
                 <AddUser
@@ -88,6 +98,12 @@ export default function UserSection() {
             )}
 
             {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} user={showUserInfo} />}
+
+            {deleteUser && (
+                <DeleteUser
+                    onCancel={onCancelDeleteUserClickHandler}
+                />
+            )}
 
             <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 

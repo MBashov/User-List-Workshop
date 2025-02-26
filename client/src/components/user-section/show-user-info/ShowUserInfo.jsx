@@ -1,7 +1,6 @@
 import formatDate from "../../../utils/dateUtils.js";
 
 export default function ShowUserInfo({ onClose, user }) {
-    console.log(user);
     
     return (
         <div className="overlay">
