@@ -13,7 +13,7 @@ export default function UserSection() {
     const [users, setUsers] = useState([]);
     const [showAddUserForm, setShowUserForm] = useState(false);
     const [showUserInfo, setShowUserInfo] = useState(null);
-    const [deleteUser, setDeleteUser] = useState(false);
+    const [deleteUser, setDeleteUser] = useState(null);
 
     useEffect(() => {
         fetch(`${baseUrl}/users`)
@@ -25,10 +25,6 @@ export default function UserSection() {
 
     function addUserClickHandler() {
         setShowUserForm(true);
-    }
-
-    function hideAddUserFormHandler() {
-        setShowUserForm(false);
     }
 
     function showUserInfoClickHandler(user) {
@@ -75,12 +71,19 @@ export default function UserSection() {
         setShowUserForm(false);
     }
 
-    function onDeleteUserClickHandler() {
-        setDeleteUser(true);
+    function userDeleteClickHandler(userId) {
+        setDeleteUser(userId);
     }
 
-    function onCancelDeleteUserClickHandler() {
-        setDeleteUser(false);
+    function onDeleteUserHandler() {
+
+        fetch(`${baseUrl}/users/${deleteUser}`, {
+            method: 'DELETE',
+        })
+            .catch(err => console.log(err.message));
+
+        setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUser));
+        setDeleteUser(null);
     }
 
     return (
@@ -88,11 +91,15 @@ export default function UserSection() {
 
             < Search />
 
-            < UserList users={users} showUserInfo={showUserInfoClickHandler} onDeleteClick={onDeleteUserClickHandler} />
+            < UserList
+                users={users}
+                showUserInfo={showUserInfoClickHandler}
+                onUserDeleteClick={userDeleteClickHandler}
+            />
 
             {showAddUserForm && (
                 <AddUser
-                    onClose={hideAddUserFormHandler}
+                    onClose={() => setShowUserForm(false)}
                     onSave={addUserSaveHandler}
                 />
             )}
@@ -101,7 +108,8 @@ export default function UserSection() {
 
             {deleteUser && (
                 <DeleteUser
-                    onCancel={onCancelDeleteUserClickHandler}
+                    onCancel={() => setDeleteUser(false)}
+                    onDelete={onDeleteUserHandler}
                 />
             )}
 
