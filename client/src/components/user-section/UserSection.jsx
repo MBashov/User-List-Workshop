@@ -93,7 +93,7 @@ export default function UserSection() {
 
             < UserList
                 users={users}
-                showUserInfo={showUserInfoClickHandler}
+                onUserShowInfoClick={showUserInfoClickHandler}
                 onUserDeleteClick={userDeleteClickHandler}
             />
 
