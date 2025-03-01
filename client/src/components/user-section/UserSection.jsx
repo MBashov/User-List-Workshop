@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
+
 import Search from "../search/Search";
 import Pagination from "../pagination/Pagination";
 import UserList from "./user-list/UserList";
 import AddUser from "./add-user/AddUser";
 import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
+import userService from "../../services/userService";
 
-const baseUrl = 'http://localhost:3030/jsonstore';
 
 export default function UserSection() {
 
     const [users, setUsers] = useState([]);
     const [showAddUserForm, setShowUserForm] = useState(false);
     const [showUserInfo, setShowUserInfo] = useState(null);
-    const [deleteUser, setDeleteUser] = useState(null);
+    const [deleteUserById, setDeleteUserById] = useState(null);
 
     useEffect(() => {
-        fetch(`${baseUrl}/users`)
-            .then(response => response.json())
-            .then(users => setUsers(Object.values(users)))
-            .catch(err => console.log(err.message));
+        userService.getAll()
+            .then(users => {
+                setUsers(users);
+            });
     }, []);
 
 
@@ -35,7 +36,7 @@ export default function UserSection() {
         setShowUserInfo(null);
     }
 
-    function addUserSaveHandler(e) {
+    async function addUserSaveHandler(e) {
         // prevent default
         e.preventDefault();
 
@@ -54,36 +55,23 @@ export default function UserSection() {
         }
 
         // make post request
-        fetch(`${baseUrl}/users`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'Application/json',
-            },
-            body: JSON.stringify(userData),
-        })
-            // update local state   
-            .then(response => response.json())
-            .then(user => setUsers(oldUsers => [...oldUsers, user]))
-            .catch(err => console.log(err.message));
-
+        const newUser = await userService.create(userData);
+        setUsers(oldUsers => [...oldUsers, newUser]);
 
         // close modal
         setShowUserForm(false);
     }
 
     function userDeleteClickHandler(userId) {
-        setDeleteUser(userId);
+        setDeleteUserById(userId);
     }
 
-    function onDeleteUserHandler() {
-
-        fetch(`${baseUrl}/users/${deleteUser}`, {
-            method: 'DELETE',
-        })
-            .catch(err => console.log(err.message));
-
-        setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUser));
-        setDeleteUser(null);
+    async function onDeleteUserHandler() {
+        await userService.delete(deleteUserById);
+        
+        setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUserById));
+        
+        setDeleteUserById(null);
     }
 
     return (
@@ -106,9 +94,9 @@ export default function UserSection() {
 
             {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} user={showUserInfo} />}
 
-            {deleteUser && (
+            {deleteUserById && (
                 <DeleteUser
-                    onCancel={() => setDeleteUser(false)}
+                    onCancel={() => setDeleteUserById(null)}
                     onDelete={onDeleteUserHandler}
                 />
             )}
