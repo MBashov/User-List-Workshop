@@ -7,7 +7,7 @@ import AddUser from "./add-user/AddUser";
 import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
 import userService from "../../services/userService";
-
+import formatUserData from "../../utils/userDataUtils";
 
 export default function UserSection() {
 
@@ -42,20 +42,12 @@ export default function UserSection() {
 
         // get user data
         const formData = new FormData(e.currentTarget);
-        const userData = {
-            ...Object.fromEntries(formData.entries()),
-            address: {
-                country: formData.get('country'),
-                city: formData.get('city'),
-                street: formData.get('street'),
-                streetNumber: formData.get('streetNumber')
-            },
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        }
+        const userData = formatUserData(formData);
 
         // make post request
         const newUser = await userService.create(userData);
+
+        // Update local state
         setUsers(oldUsers => [...oldUsers, newUser]);
 
         // close modal
