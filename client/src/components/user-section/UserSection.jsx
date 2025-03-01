@@ -28,11 +28,15 @@ export default function UserSection() {
         setShowUserForm(true);
     }
 
+    function closeAddUserClickHandler() {
+        setShowUserForm(false);
+    }
+
     function showUserInfoClickHandler(user) {
         setShowUserInfo(user);
     }
 
-    function hideShowUserInfo() {
+    function closeUserInfoClickHandler() {
         setShowUserInfo(null);
     }
 
@@ -54,11 +58,15 @@ export default function UserSection() {
         setShowUserForm(false);
     }
 
-    function userDeleteClickHandler(userId) {
+    function deleteUserClickHandler(userId) {
         setDeleteUserById(userId);
     }
 
-    async function onDeleteUserHandler() {
+    function cancelDeleteUserClickHandler() {
+        setDeleteUserById(null);
+    }
+
+    async function deleteUserHandler() {
         await userService.delete(deleteUserById);
         
         setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUserById));
@@ -73,23 +81,23 @@ export default function UserSection() {
 
             < UserList
                 users={users}
-                onUserShowInfoClick={showUserInfoClickHandler}
-                onUserDeleteClick={userDeleteClickHandler}
+                onShowUserInfo={showUserInfoClickHandler}
+                onUserDeleteClick={deleteUserClickHandler}
             />
 
             {showAddUserForm && (
                 <AddUser
-                    onClose={() => setShowUserForm(false)}
+                    onClose={closeAddUserClickHandler}
                     onSave={addUserSaveHandler}
                 />
             )}
 
-            {showUserInfo && <ShowUserInfo onClose={hideShowUserInfo} user={showUserInfo} />}
+            {showUserInfo && <ShowUserInfo onClose={closeUserInfoClickHandler} user={showUserInfo} />}
 
             {deleteUserById && (
                 <DeleteUser
-                    onCancel={() => setDeleteUserById(null)}
-                    onDelete={onDeleteUserHandler}
+                    onCancel={cancelDeleteUserClickHandler}
+                    onDelete={deleteUserHandler}
                 />
             )}
 
