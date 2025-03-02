@@ -12,8 +12,8 @@ import formatUserData from "../../utils/userDataUtils";
 export default function UserSection() {
 
     const [users, setUsers] = useState([]);
-    const [showAddUserForm, setShowUserForm] = useState(false);
-    const [showUserInfo, setShowUserInfo] = useState(null);
+    const [showAddUserForm, setShowAddUserForm] = useState(false);
+    const [showUserInfoById, setShowUserInfoById] = useState(null);
     const [deleteUserById, setDeleteUserById] = useState(null);
 
     useEffect(() => {
@@ -25,19 +25,19 @@ export default function UserSection() {
 
 
     function addUserClickHandler() {
-        setShowUserForm(true);
+        setShowAddUserForm(true);
     }
 
     function closeAddUserClickHandler() {
-        setShowUserForm(false);
+        setShowAddUserForm(false);
     }
 
-    function showUserInfoClickHandler(user) {
-        setShowUserInfo(user);
+    function showUserInfoClickHandler(userId) {
+        setShowUserInfoById(userId);
     }
 
     function closeUserInfoClickHandler() {
-        setShowUserInfo(null);
+        setShowUserInfoById(null);
     }
 
     async function addUserSaveHandler(e) {
@@ -55,7 +55,7 @@ export default function UserSection() {
         setUsers(oldUsers => [...oldUsers, newUser]);
 
         // close modal
-        setShowUserForm(false);
+        setShowAddUserForm(false);
     }
 
     function deleteUserClickHandler(userId) {
@@ -68,9 +68,9 @@ export default function UserSection() {
 
     async function deleteUserHandler() {
         await userService.delete(deleteUserById);
-        
+
         setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUserById));
-        
+
         setDeleteUserById(null);
     }
 
@@ -81,7 +81,7 @@ export default function UserSection() {
 
             < UserList
                 users={users}
-                onShowUserInfo={showUserInfoClickHandler}
+                onInfoClick={showUserInfoClickHandler}
                 onUserDeleteClick={deleteUserClickHandler}
             />
 
@@ -92,7 +92,12 @@ export default function UserSection() {
                 />
             )}
 
-            {showUserInfo && <ShowUserInfo onClose={closeUserInfoClickHandler} user={showUserInfo} />}
+            {showUserInfoById && (
+                <ShowUserInfo
+                    onClose={closeUserInfoClickHandler}
+                    userId={showUserInfoById}
+                />
+            )}
 
             {deleteUserById && (
                 <DeleteUser

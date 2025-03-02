@@ -1,7 +1,19 @@
+import { useEffect, useState } from "react";
+
+import userService from "../../../services/userService.js";
 import formatDate from "../../../utils/dateUtils.js";
 
-export default function ShowUserInfo({ onClose, user }) {
-    
+export default function ShowUserInfo({ onClose, userId }) {
+
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        userService.getOne(userId)
+            .then(result => {
+                setUser(result)
+            })
+    }, [userId]);
+
     return (
         <div className="overlay">
             <div className="backdrop" onClick={onClose}></div>
@@ -32,7 +44,7 @@ export default function ShowUserInfo({ onClose, user }) {
                             <p>Phone Number: <strong>{user.phoneNumber}</strong></p>
                             <p>
                                 Address:
-                                <strong> {Object.values(user.address).join(', ')} </strong>
+                                <strong>{user.address?.city}, {user.address?.country}, {user.address?.street}, {user.address?.streetNumber}</strong>
                             </p>
 
                             <p>Created on: <strong>{formatDate(user.createdAt)}</strong></p>

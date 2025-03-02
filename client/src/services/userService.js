@@ -10,6 +10,13 @@ export default {
         return users
     },
 
+    async getOne(userId) {
+        const response = await fetch(`${baseUrl}/${userId}`);
+        const result = await response.json();
+
+        return result;
+    },
+
     async create(userData) {
         const response = await fetch(baseUrl, {
             method: 'POST',
