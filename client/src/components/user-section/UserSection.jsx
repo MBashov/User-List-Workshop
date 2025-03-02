@@ -7,7 +7,7 @@ import AddUser from "./add-user/AddUser";
 import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
 import userService from "../../services/userService";
-import formatUserData from "../../utils/userDataUtils";
+import transformUserData from "../../utils/userDataUtils";
 
 export default function UserSection() {
 
@@ -15,6 +15,7 @@ export default function UserSection() {
     const [showAddUserForm, setShowAddUserForm] = useState(false);
     const [showUserInfoById, setShowUserInfoById] = useState(null);
     const [deleteUserById, setDeleteUserById] = useState(null);
+    const [editUserById, setEditUserById] = useState(null);
 
     useEffect(() => {
         userService.getAll()
@@ -24,19 +25,20 @@ export default function UserSection() {
     }, []);
 
 
-    function addUserClickHandler() {
+    function showAddEditUserForm() {
         setShowAddUserForm(true);
     }
 
-    function closeAddUserClickHandler() {
+    function closeAddUserForm() {
         setShowAddUserForm(false);
+        setEditUserById(null);
     }
 
-    function showUserInfoClickHandler(userId) {
+    function showUserInfoModal(userId) {
         setShowUserInfoById(userId);
     }
 
-    function closeUserInfoClickHandler() {
+    function closeUserInfoModal() {
         setShowUserInfoById(null);
     }
 
@@ -45,33 +47,56 @@ export default function UserSection() {
         e.preventDefault();
 
         // get user data
-        const formData = new FormData(e.currentTarget);
-        const userData = formatUserData(formData);
+        const formData = new FormData(e.target.parentElement.parentElement);
+        const userData = transformUserData(formData);
 
         // make post request
         const newUser = await userService.create(userData);
 
         // Update local state
-        setUsers(oldUsers => [...oldUsers, newUser]);
+        setUsers(users => [...users, newUser]);
 
         // close modal
         setShowAddUserForm(false);
     }
 
-    function deleteUserClickHandler(userId) {
+    function showUserDeleteDialog(userId) {
         setDeleteUserById(userId);
     }
 
-    function cancelDeleteUserClickHandler() {
+    function closeUserDeleteDialog() {
         setDeleteUserById(null);
     }
 
     async function deleteUserHandler() {
         await userService.delete(deleteUserById);
 
-        setUsers(oldUsers => oldUsers.filter(user => user._id !== deleteUserById));
+        setUsers(users => users.filter(user => user._id !== deleteUserById));
 
         setDeleteUserById(null);
+    }
+
+    function showUserEditForm(userId) {
+        setEditUserById(userId);
+    }
+
+    async function editUserSaveHandler(e) {
+        const userId = editUserById;
+        // prevent default
+        e.preventDefault();
+
+        // get user data
+        const formData = new FormData(e.target.parentElement.parentElement);
+        const userData = transformUserData(formData);
+
+        // make put request
+        const updatedUser = await userService.edit(userId, userData);
+        
+        // Update local state
+        setUsers(users => users.map(user => user._id === updatedUser._id ? updatedUser : user));
+
+        // close modal
+        setEditUserById(null);
     }
 
     return (
@@ -81,32 +106,42 @@ export default function UserSection() {
 
             < UserList
                 users={users}
-                onInfoClick={showUserInfoClickHandler}
-                onUserDeleteClick={deleteUserClickHandler}
+                onInfoClick={showUserInfoModal}
+                onDeleteClick={showUserDeleteDialog}
+                onEditClick={showUserEditForm}
             />
 
             {showAddUserForm && (
                 <AddUser
-                    onClose={closeAddUserClickHandler}
+                    onClose={closeAddUserForm}
                     onSave={addUserSaveHandler}
                 />
             )}
 
             {showUserInfoById && (
                 <ShowUserInfo
-                    onClose={closeUserInfoClickHandler}
+                    onClose={closeUserInfoModal}
                     userId={showUserInfoById}
                 />
             )}
 
             {deleteUserById && (
                 <DeleteUser
-                    onCancel={cancelDeleteUserClickHandler}
+                    onCancel={closeUserDeleteDialog}
                     onDelete={deleteUserHandler}
                 />
             )}
 
-            <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
+            {editUserById && (
+                <AddUser
+                    userId={editUserById}
+                    onClose={closeAddUserForm}
+                    onSave={addUserSaveHandler}
+                    onEdit={editUserSaveHandler}
+                />
+            )}
+
+            <button className="btn-add btn" onClick={showAddEditUserForm}>Add new user</button>
 
             < Pagination />
         </section>

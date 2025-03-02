@@ -1,4 +1,4 @@
-export default function formatUserData(formData) {
+export default function transformUserData(formData) {
     const userData = Object.fromEntries(formData.entries());
 
     const { country, city, street, streetNumber, ...formatedData } = userData;

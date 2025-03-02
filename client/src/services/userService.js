@@ -1,6 +1,5 @@
 const baseUrl = 'http://localhost:3030/jsonstore/users';
 
-
 export default {
     async getAll() {
         const response = await fetch(baseUrl);
@@ -24,6 +23,19 @@ export default {
                 'Content-Type': 'Application/json',
             },
             body: JSON.stringify(userData),
+        });
+        const result = await response.json();
+
+        return result;
+    },
+
+    async edit(userId, userData) {
+        const response = await fetch(`${baseUrl}/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'Application/json',
+            },
+            body: JSON.stringify({_id: userId, ...userData}),
         });
         const result = await response.json();
 
