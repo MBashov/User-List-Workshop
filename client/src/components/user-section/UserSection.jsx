@@ -8,6 +8,7 @@ import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
 import userService from "../../services/userService";
 import transformUserData from "../../utils/userDataUtils";
+import LoadingShade from "../loading-shade/loadingshade";
 
 export default function UserSection() {
 
@@ -16,11 +17,13 @@ export default function UserSection() {
     const [showUserInfoById, setShowUserInfoById] = useState(null);
     const [deleteUserById, setDeleteUserById] = useState(null);
     const [editUserById, setEditUserById] = useState(null);
+    const [spinner, setSpiner] = useState(true);
 
     useEffect(() => {
         userService.getAll()
             .then(users => {
                 setUsers(users);
+                setSpiner(false);
             });
     }, []);
 
@@ -45,19 +48,19 @@ export default function UserSection() {
     async function addUserSaveHandler(e) {
         // prevent default
         e.preventDefault();
-
+        
+        setSpiner(true);
         // get user data
         const formData = new FormData(e.target.parentElement.parentElement);
         const userData = transformUserData(formData);
 
         // make post request
         const newUser = await userService.create(userData);
-
         // Update local state
         setUsers(users => [...users, newUser]);
-
         // close modal
         setShowAddUserForm(false);
+        setSpiner(false);
     }
 
     function showUserDeleteDialog(userId) {
@@ -69,11 +72,13 @@ export default function UserSection() {
     }
 
     async function deleteUserHandler() {
+        setSpiner(true);
         await userService.delete(deleteUserById);
 
         setUsers(users => users.filter(user => user._id !== deleteUserById));
 
         setDeleteUserById(null);
+        setSpiner(false);
     }
 
     function showUserEditForm(userId) {
@@ -81,6 +86,7 @@ export default function UserSection() {
     }
 
     async function editUserSaveHandler(e) {
+        setSpiner(true);
         const userId = editUserById;
         // prevent default
         e.preventDefault();
@@ -91,12 +97,13 @@ export default function UserSection() {
 
         // make put request
         const updatedUser = await userService.edit(userId, userData);
-        
+
         // Update local state
         setUsers(users => users.map(user => user._id === updatedUser._id ? updatedUser : user));
 
         // close modal
         setEditUserById(null);
+        setSpiner(false);
     }
 
     return (
@@ -140,6 +147,8 @@ export default function UserSection() {
                     onEdit={editUserSaveHandler}
                 />
             )}
+
+            {spinner && <LoadingShade />}
 
             <button className="btn-add btn" onClick={showAddEditUserForm}>Add new user</button>
 
