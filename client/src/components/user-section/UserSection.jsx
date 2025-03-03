@@ -8,7 +8,7 @@ import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
 import userService from "../../services/userService";
 import transformUserData from "../../utils/userDataUtils";
-import LoadingShade from "../loading-shade/loadingshade";
+import LoadingShade from "../loading-shade/LoadingShade";
 
 export default function UserSection() {
 
@@ -18,12 +18,18 @@ export default function UserSection() {
     const [deleteUserById, setDeleteUserById] = useState(null);
     const [editUserById, setEditUserById] = useState(null);
     const [spinner, setSpiner] = useState(true);
+    const [failToFetch, setFailToFetch] = useState(false);
 
     useEffect(() => {
         userService.getAll()
             .then(users => {
                 setUsers(users);
                 setSpiner(false);
+            })
+            .catch(err => {
+                setSpiner(false);
+                setFailToFetch(true);
+                console.log(err.message);
             });
     }, []);
 
@@ -48,19 +54,29 @@ export default function UserSection() {
     async function addUserSaveHandler(e) {
         // prevent default
         e.preventDefault();
-        
+
         setSpiner(true);
         // get user data
         const formData = new FormData(e.target.parentElement.parentElement);
         const userData = transformUserData(formData);
 
-        // make post request
-        const newUser = await userService.create(userData);
-        // Update local state
-        setUsers(users => [...users, newUser]);
-        // close modal
-        setShowAddUserForm(false);
-        setSpiner(false);
+        try {
+            // make post request
+            const newUser = await userService.create(userData);
+
+            // Update local state
+            setUsers(users => [...users, newUser]);
+
+            // close modal
+            setShowAddUserForm(false);
+            setSpiner(false);
+
+        } catch (err) {
+            setSpiner(false);
+            setFailToFetch(true);
+            console.log(err.message);
+        }
+
     }
 
     function showUserDeleteDialog(userId) {
@@ -73,12 +89,19 @@ export default function UserSection() {
 
     async function deleteUserHandler() {
         setSpiner(true);
-        await userService.delete(deleteUserById);
 
-        setUsers(users => users.filter(user => user._id !== deleteUserById));
+        try {
+            await userService.delete(deleteUserById);
+            setUsers(users => users.filter(user => user._id !== deleteUserById));
 
-        setDeleteUserById(null);
-        setSpiner(false);
+            setDeleteUserById(null);
+            setSpiner(false);
+
+        } catch (err) {
+            setSpiner(false);
+            setFailToFetch(true);
+            console.log(err.message);
+        }
     }
 
     function showUserEditForm(userId) {
@@ -95,15 +118,22 @@ export default function UserSection() {
         const formData = new FormData(e.target.parentElement.parentElement);
         const userData = transformUserData(formData);
 
-        // make put request
-        const updatedUser = await userService.edit(userId, userData);
+        try {
+            // make put request
+            const updatedUser = await userService.edit(userId, userData);
 
-        // Update local state
-        setUsers(users => users.map(user => user._id === updatedUser._id ? updatedUser : user));
+            // Update local state
+            setUsers(users => users.map(user => user._id === updatedUser._id ? updatedUser : user));
 
-        // close modal
-        setEditUserById(null);
-        setSpiner(false);
+            // close modal
+            setEditUserById(null);
+            setSpiner(false);
+
+        } catch (err) {
+            setSpiner(false);
+            setFailToFetch(true);
+            console.log(err.message);
+        }
     }
 
     return (
@@ -148,7 +178,11 @@ export default function UserSection() {
                 />
             )}
 
-            {spinner && <LoadingShade />}
+            <LoadingShade
+                spinner={spinner}
+                users={users}
+                failToFetch={failToFetch}
+            />
 
             <button className="btn-add btn" onClick={showAddEditUserForm}>Add new user</button>
 
