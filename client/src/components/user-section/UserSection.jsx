@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
+import transformUserData from "../../utils/userDataUtils.js";
+import userService from "../../services/userService.js";
+
 import Search from "../search/Search";
 import Pagination from "../pagination/Pagination";
 import UserList from "./user-list/UserList";
 import AddUser from "./add-user/AddUser";
 import ShowUserInfo from "./show-user-info/ShowUserInfo";
 import DeleteUser from "./delete-user/DeleteUser";
-import userService from "../../services/userService";
-import transformUserData from "../../utils/userDataUtils";
-import LoadingShade from "../loading-shade/LoadingShade";
 
 export default function UserSection() {
 
@@ -146,6 +146,8 @@ export default function UserSection() {
                 onInfoClick={showUserInfoModal}
                 onDeleteClick={showUserDeleteDialog}
                 onEditClick={showUserEditForm}
+                spinner={spinner}
+                failToFetch={failToFetch}
             />
 
             {showAddUserForm && (
@@ -177,12 +179,6 @@ export default function UserSection() {
                     onEdit={editUserSaveHandler}
                 />
             )}
-
-            <LoadingShade
-                spinner={spinner}
-                users={users}
-                failToFetch={failToFetch}
-            />
 
             <button className="btn-add btn" onClick={showAddEditUserForm}>Add new user</button>
 

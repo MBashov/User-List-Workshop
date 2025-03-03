@@ -4,18 +4,16 @@ import Spinner from "./svg-files/Spinner";
 
 export default function LoadingShade({
     spinner,
-    users,
+    noUsersYet,
     failToFetch
 }) {
-
-    if (users.length === 0) {
-        users = null;
-    }
+    console.log(spinner);
     return (
+        
         <div className="loading-shade">
             {spinner && <Spinner />}
 
-            {!users && !spinner && !failToFetch && <NoUsersYet />}
+            {!spinner && !failToFetch && noUsersYet && <NoUsersYet />}
 
             {failToFetch && <FailedToFetch />}
 
@@ -39,6 +37,6 @@ export default function LoadingShade({
                 <h2>Sorry, we couldn't find what you're looking for.</h2>
             </div>*/}
 
-        </div>
+        </div>  
     );
 }

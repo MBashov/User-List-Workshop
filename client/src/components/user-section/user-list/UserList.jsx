@@ -1,14 +1,33 @@
 import UserListItem from "./user-list-item/UserListItem";
+import LoadingShade from "../../loading-shade/LoadingShade";
+
 
 export default function UserList({
     users,
     onInfoClick,
     onDeleteClick,
-    onEditClick
+    onEditClick,
+    spinner,
+    failToFetch,
 
 }) {
+    
+    let noUsersYet = false;
+
+    if (users.length === 0) {
+        noUsersYet = true;
+    }
+
     return (
         <div className="table-wrapper">
+
+            {(spinner || noUsersYet || failToFetch) && (
+                < LoadingShade
+                    spinner={spinner}
+                    noUsersYet={noUsersYet}
+                    failToFetch={failToFetch}
+                />
+            )}
 
             <table className="table">
                 <thead>
