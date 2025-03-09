@@ -228,6 +228,7 @@ ul {
 .table th .icon {
   margin-left: 10px;
   opacity: 0;
+  transform: rotate(0deg);
 }
 
 .table th .active-icon {

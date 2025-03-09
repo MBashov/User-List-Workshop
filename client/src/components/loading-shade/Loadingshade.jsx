@@ -7,7 +7,6 @@ export default function LoadingShade({
     noUsersYet,
     failToFetch
 }) {
-    console.log(spinner);
     return (
         
         <div className="loading-shade">
