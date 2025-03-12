@@ -1,23 +1,25 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import userService from "../../services/userService";
 
 export default function Search({ onSearch }) {
 
-    const [searchString, setSearchString] = useState('');
+    const [values, setValues] = useState({
+        search: '',
+        criteria: 'Not selected',
+    });
 
     async function searchSubmitHandler(e) {
         e.preventDefault();
-        console.log(searchString);
-
-        const users = await userService.getAll({ search: searchString });
-
+        
+        const users = await userService.getAll({ search: values.search, criteria: values.criteria });
+        console.log(users);
+        
         onSearch(users);
 
     }
 
-    function searchChangeHandler(e) {
-        setSearchString(e.target.value);
-
+    function changeHandler(e) {
+        setValues(state => ({...state, [e.target.name]: e.target.value}));
     }
 
     return (
@@ -36,8 +38,8 @@ export default function Search({ onSearch }) {
                 <input
                     type="text"
                     placeholder="Please, select the search criteria"
-                    value={searchString}
-                    onChange={searchChangeHandler}
+                    value={values.search}
+                    onChange={changeHandler}
                     name="search"
                     defaultChecked
                 />
@@ -53,12 +55,17 @@ export default function Search({ onSearch }) {
 
             <div className="filter">
                 <span>Search Criteria:</span>
-                <select name="criteria" className="criteria">
-                    <option value="">Not selected</option>
-                    <option value="">First Name</option>
-                    <option value="">Last Name</option>
-                    <option value="">Email</option>
-                    <option value="">Phone</option>
+                <select
+                    name="criteria"
+                    className="criteria"
+                    value={values.criteria}
+                    onChange={changeHandler}
+                >
+                    <option value="Not selected">Not selected</option>
+                    <option value="First Name">First Name</option>
+                    <option value="Last Name">Last Name</option>
+                    <option value="Email">Email</option>
+                    <option value="Phone">Phone</option>
                 </select>
             </div>
         </form>

@@ -1,22 +1,36 @@
 const baseUrl = 'http://localhost:3030/jsonstore/users';
 
 export default {
-    // async getAll() {
-    //     const response = await fetch(baseUrl);
-    //     const result = await response.json();
-    //     const users = Object.values(result);
-
-    //     return users
-    // },
     async getAll(filter = {}) {
-        let users; 
+        let users;
         const response = await fetch(baseUrl);
         const result = await response.json();
+
         users = Object.values(result);
 
-        if (filter.search) {
-            users = users.filter(user => user.firstName.includes(filter.search));
+        if (filter.search && (filter.criteria === 'Not selected')) {
+            return users = users.filter(user => {
+                return user.firstName.toLowerCase().includes(filter.search.toLowerCase()) ||
+                    user.lastName.toLowerCase().includes(filter.search.toLowerCase()) ||
+                    user.email.toLowerCase().includes(filter.search.toLowerCase()) ||
+                    user.phoneNumber.includes(filter.search)
+            });
         }
+        
+        if (filter.search && (filter.criteria !== 'Not selected')) {
+        switch (filter.criteria) {
+            case 'First Name':
+                return users.filter(user => user.firstName.toLowerCase().includes(filter.search.toLowerCase()));
+            case 'Last Name':
+                return users.filter(user => user.lastName.toLowerCase().includes(filter.search.toLowerCase()));
+            case 'Email':
+                return users.filter(user => user.email.toLowerCase().includes(filter.search.toLowerCase()));
+            case 'Phone':
+                return users.filter(user => user.phoneNumber.includes(filter.search));
+            default:
+                return users;
+        }
+    }
 
         return users
     },
@@ -47,7 +61,7 @@ export default {
             headers: {
                 'Content-Type': 'Application/json',
             },
-            body: JSON.stringify({_id: userId, ...userData}),
+            body: JSON.stringify({ _id: userId, ...userData }),
         });
         const result = await response.json();
 
