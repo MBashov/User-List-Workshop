@@ -1,10 +1,22 @@
 const baseUrl = 'http://localhost:3030/jsonstore/users';
 
 export default {
-    async getAll() {
+    // async getAll() {
+    //     const response = await fetch(baseUrl);
+    //     const result = await response.json();
+    //     const users = Object.values(result);
+
+    //     return users
+    // },
+    async getAll(filter = {}) {
+        let users; 
         const response = await fetch(baseUrl);
         const result = await response.json();
-        const users = Object.values(result);
+        users = Object.values(result);
+
+        if (filter.search) {
+            users = users.filter(user => user.firstName.includes(filter.search));
+        }
 
         return users
     },

@@ -135,11 +135,15 @@ export default function UserSection() {
             console.log(err.message);
         }
     }
-
+    
+    function showSearchedUsers(users) {
+        setUsers(users);
+    }
+    
     return (
         <section className="card users-container">
 
-            < Search />
+            < Search onSearch={showSearchedUsers} />
 
             < UserList
                 users={users}

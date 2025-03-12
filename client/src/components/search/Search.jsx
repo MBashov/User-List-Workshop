@@ -1,6 +1,27 @@
-export default function Search() {
+import { useState } from "react";
+import userService from "../../services/userService";
+
+export default function Search({ onSearch }) {
+
+    const [searchString, setSearchString] = useState('');
+
+    async function searchSubmitHandler(e) {
+        e.preventDefault();
+        console.log(searchString);
+
+        const users = await userService.getAll({ search: searchString });
+
+        onSearch(users);
+
+    }
+
+    function searchChangeHandler(e) {
+        setSearchString(e.target.value);
+
+    }
+
     return (
-        <form className="search-form">
+        <form onSubmit={searchSubmitHandler} className="search-form">
             <h2>
                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user"
                     className="svg-inline--fa fa-user SearchBar_icon__cXpTg" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +33,14 @@ export default function Search() {
                 <span>Users</span>
             </h2>
             <div className="search-input-container">
-                <input type="text" placeholder="Please, select the search criteria" name="search" defaultChecked/>
+                <input
+                    type="text"
+                    placeholder="Please, select the search criteria"
+                    value={searchString}
+                    onChange={searchChangeHandler}
+                    name="search"
+                    defaultChecked
+                />
 
                 <button className="btn close-btn">
                     <i className="fa-solid fa-xmark"></i>
