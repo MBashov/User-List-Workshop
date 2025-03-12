@@ -10,16 +10,14 @@ export default function Search({ onSearch }) {
 
     async function searchSubmitHandler(e) {
         e.preventDefault();
-        
-        const users = await userService.getAll({ search: values.search, criteria: values.criteria });
-        console.log(users);
-        
-        onSearch(users);
 
+        const users = await userService.getAll({ search: values.search, criteria: values.criteria });
+
+        onSearch(users);
     }
 
     function changeHandler(e) {
-        setValues(state => ({...state, [e.target.name]: e.target.value}));
+        setValues(state => ({ ...state, [e.target.name]: e.target.value }));
     }
 
     return (

@@ -19,6 +19,7 @@ export default function UserSection() {
     const [editUserById, setEditUserById] = useState(null);
     const [spinner, setSpiner] = useState(true);
     const [failToFetch, setFailToFetch] = useState(false);
+    const [noMatches, setNoMatches] = useState(false);
 
     useEffect(() => {
         userService.getAll()
@@ -135,15 +136,22 @@ export default function UserSection() {
             console.log(err.message);
         }
     }
-    
-    function showSearchedUsers(users) {
-        setUsers(users);
+
+    function showUsersMatched(matches) {
+        if (matches.length === 0) {
+            setNoMatches(true);
+        } else {
+            setNoMatches(false);
+        }
+        setUsers(matches);
     }
-    
+
     return (
         <section className="card users-container">
 
-            < Search onSearch={showSearchedUsers} />
+            < Search
+                onSearch={showUsersMatched}
+            />
 
             < UserList
                 users={users}
@@ -152,6 +160,7 @@ export default function UserSection() {
                 onEditClick={showUserEditForm}
                 spinner={spinner}
                 failToFetch={failToFetch}
+                noMatches={noMatches}
             />
 
             {showAddUserForm && (

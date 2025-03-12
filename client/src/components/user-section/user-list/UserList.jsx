@@ -9,6 +9,7 @@ export default function UserList({
     onEditClick,
     spinner,
     failToFetch,
+    noMatches
 }) {
     let noUsersYet = false;
     if (users.length === 0) {
@@ -63,11 +64,12 @@ export default function UserList({
 
     return (
         <div className="table-wrapper">
-            {(spinner || noUsersYet || failToFetch) && (
+            {(spinner || noUsersYet || failToFetch || noMatches) && (
                 <LoadingShade
                     spinner={spinner}
                     noUsersYet={noUsersYet}
                     failToFetch={failToFetch}
+                    noMatches={noMatches}
                 />
             )}
 

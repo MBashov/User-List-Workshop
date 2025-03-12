@@ -16,21 +16,21 @@ export default {
                     user.phoneNumber.includes(filter.search)
             });
         }
-        
+
         if (filter.search && (filter.criteria !== 'Not selected')) {
-        switch (filter.criteria) {
-            case 'First Name':
-                return users.filter(user => user.firstName.toLowerCase().includes(filter.search.toLowerCase()));
-            case 'Last Name':
-                return users.filter(user => user.lastName.toLowerCase().includes(filter.search.toLowerCase()));
-            case 'Email':
-                return users.filter(user => user.email.toLowerCase().includes(filter.search.toLowerCase()));
-            case 'Phone':
-                return users.filter(user => user.phoneNumber.includes(filter.search));
-            default:
-                return users;
+            switch (filter.criteria) {
+                case 'First Name':
+                    return users.filter(user => user.firstName.toLowerCase().includes(filter.search.toLowerCase()));
+                case 'Last Name':
+                    return users.filter(user => user.lastName.toLowerCase().includes(filter.search.toLowerCase()));
+                case 'Email':
+                    return users.filter(user => user.email.toLowerCase().includes(filter.search.toLowerCase()));
+                case 'Phone':
+                    return users.filter(user => user.phoneNumber.includes(filter.search));
+                default:
+                    return users;
+            }
         }
-    }
 
         return users
     },
