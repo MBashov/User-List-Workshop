@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import userService from "../../services/userService";
 
 export default function Search({ onSearch }) {
@@ -8,8 +8,7 @@ export default function Search({ onSearch }) {
         criteria: 'Not selected',
     });
 
-    async function searchSubmitHandler(e) {
-        e.preventDefault();
+    async function searchSubmitHandler() {
 
         const users = await userService.getAll({ search: values.search, criteria: values.criteria });
 
@@ -20,8 +19,14 @@ export default function Search({ onSearch }) {
         setValues(state => ({ ...state, [e.target.name]: e.target.value }));
     }
 
+    function clearSearchHandler(e) {
+        e.preventDefault();
+
+        setValues(state => ({ ...state, search: '' }));
+    }
+
     return (
-        <form onSubmit={searchSubmitHandler} className="search-form">
+        <form className="search-form">
             <h2>
                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user"
                     className="svg-inline--fa fa-user SearchBar_icon__cXpTg" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -42,11 +47,11 @@ export default function Search({ onSearch }) {
                     defaultChecked
                 />
 
-                <button className="btn close-btn">
+                <button onClick={clearSearchHandler} className="btn close-btn">
                     <i className="fa-solid fa-xmark"></i>
                 </button>
 
-                <button className="btn" title="Please, select the search criteria">
+                <button formAction={searchSubmitHandler} className="btn" title="Please, select the search criteria">
                     <i className="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
